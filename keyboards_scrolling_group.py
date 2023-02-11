@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery
 
 from aiogram_dialog import Window, Dialog, DialogRegistry, DialogManager, StartMode
-from aiogram_dialog.widgets.kbd import Button, Url
+from aiogram_dialog.widgets.kbd import Button, Url, Column, Row, Group, ScrollingGroup
 from aiogram_dialog.widgets.text import Const
 from aiogram_dialog.widgets.text import Multi
 
@@ -20,36 +20,37 @@ class MySG(StatesGroup):
     main = State()
 
 
-# getter.py
-async def get_data(**kwargs):
-    return {"name": "Tishka18", }
-
-
 # selected.py
-async def go_clicked(c: CallbackQuery, button: Button, manager: DialogManager):
-    await c.message.answer("Going on!")
+async def on_quintity_selected(c: CallbackQuery, button: Button, manager: DialogManager):
+    quanity = button.widget_id
+    await c.message.answer(quanity)
 
 
+# getters.py
+def test_buttons_creator():
+    btn_quantity = range(1, 21)
+    buttons = []
+    for i in btn_quantity:
+        i = str(i)
+        buttons.append(Button(Const(i), id=i, on_click=on_quintity_selected))
+    return buttons
+
+
+# keyboards.py
+scrolling_group = ScrollingGroup(
+    *test_buttons_creator(),
+    id="numbers",
+    width=5,
+    height=2,
+)
+
+# __init__.py
 dialog = Dialog(
-    Window(
-        Multi(
-            Const("Hello!"),
-            Const("And goodbye!"),
-            sep=" ",
-        ),
-        Button(
-            Const("Go"),
-            id="go",  # id is used to detect which button is clicked
-            on_click=go_clicked,
-        ),
-        Url(
-            Const("Github"),
-            Const('https://github.com/Tishka17/aiogram_dialog/'),
-        ),
-        state=MySG.main,
-        getter=get_data,  # data getter
-    ))
-
+    Window('Группа',
+           scrolling_group,
+           state=MySG.main,
+           )
+)
 registry.register(dialog)
 
 
