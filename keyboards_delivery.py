@@ -1,5 +1,4 @@
 import operator
-from typing import Any
 
 from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -8,12 +7,12 @@ from aiogram.types import Message, CallbackQuery
 
 from aiogram_dialog import Window, Dialog, DialogRegistry, DialogManager, StartMode, ChatEvent
 from aiogram_dialog.widgets.kbd import Button, Url, Column, Row, Group, ScrollingGroup, ManagedCheckboxAdapter, \
-    Checkbox, Select
+    Checkbox, Radio, Multiselect
 from aiogram_dialog.widgets.text import Const, Format
 from aiogram_dialog.widgets.text import Multi
 
 storage = MemoryStorage()
-token = "5832323088:AAEmcpRNspoK19fFdkOeJqJGJaS3sajBVHY"
+token = "5832323088:AAH6wC9N4xmU8dm7z2nAGQj-phiTGnatmc4"
 bot = Bot(token)
 dp = Dispatcher(bot, storage=storage)
 registry = DialogRegistry(dp)
@@ -24,39 +23,49 @@ class MySG(StatesGroup):
     main = State()
 
 
+# selected.py
+async def check_changed(event: ChatEvent, checkbox: ManagedCheckboxAdapter, manager: DialogManager):
+    print("Check status changed:", checkbox.is_checked())
+
+
 # getters.py
 async def get_data(**kwargs):
-    quianity = [
-        ("1 шт", '1'),
-        ("2 шт", '2'),
-        ("3 шт", '3'),
-        ("4 шт", '4'),
+    fruits = [
+        ("Офис выдачи", '1'),
+        ("Курьер СДЭК", '2'),
     ]
     return {
-        "items": quianity,
-        "count": quianity,
+        "fruits": fruits,
+        "count": len(fruits),
     }
 
 
-# selected.py
-async def on_count_selected(c: CallbackQuery, widget: Any, manager: DialogManager, item_id: str):
-    print("Button selected: ", item_id)
-    return item_id
-
-
 # keyboards.py
-fruits_kbd = Select(
-    Format("{item[0]}"),
-    id="s_counts",
-    item_id_getter=operator.itemgetter(1),  # each item is a tuple with id on a first position
-    items="items",  # we will use items from window data at a key `items`
-    on_click=on_count_selected,
+fruits_kbd = Radio(
+    Format("🔘 {item[0]}"),  # E.g `🔘 Apple`
+    Format("⚪️ {item[0]}"),
+    id="r_fruits",
+    item_id_getter=operator.itemgetter(0),
+    items="fruits",
 )
 
-# window.py
+
+# __init__.py
 dialog = Dialog(
-    Window('Выберите количетсво',
+    Window('''Выбор способа доставки !
+ 
+Мы доставляем через СДЭК.
+
+🏘 В офис выдачи СДЭК от 140 ₽.
+🏃‍Курьером СДЭК от 250 ₽.
+ 
+Выберите способ доставки 🔘️.
+Нажмите сохраните 🆗.
+''',
            fruits_kbd,
+           Button(Const("Сохранить изменения 🆗"), id="tele", ),
+           Button(Const("Назад 🔚"), id="tele", ),
+           Button(Const("В Каталог 💊"), id="tele",),
            state=MySG.main,
            getter=get_data,  # data getter
            )

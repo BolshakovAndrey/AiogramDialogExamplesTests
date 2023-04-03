@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 aiogram = "==2.25.1"
 aiogram-dialog = "==1.9.0"
+graphviz = "*"
 
 [dev-packages]
 

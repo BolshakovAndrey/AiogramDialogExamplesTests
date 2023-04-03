@@ -27,32 +27,33 @@ async def clicked(c: CallbackQuery, button: Button, manager: DialogManager):
 
 # keyboards.py
 group = Group(
-    Button(Const("Crawl"), id="crawl", on_click=clicked),
-    Button(Const("Go"), id="go", on_click=clicked),
-    Button(Const("Run"), id="run", on_click=clicked),
-    Button(Const("Fly"), id="fly", on_click=clicked),
-    Button(Const("Teleport"), id="tele", on_click=clicked),
-    width=2,
-)
+    Button(Const("Оформить заказ 🆗"), id="tele", on_click=clicked),
+    Button(Const("Изменить товары в корзине 🔄"), id="tele", on_click=clicked),
+    Button(Const("Очистить корзину 🗑"), id="tele", on_click=clicked),
+    Button(Const("Назад 🔚"), id="tele", on_click=clicked),
+    Button(Const("В Каталог 💊"), id="tele", on_click=clicked),
 
-row = Row(
-    Button(Const("Go"), id="go", on_click=clicked),
-    Button(Const("Run"), id="run", on_click=clicked),
-    Button(Const("Fly"), id="fly"),
+    width=1,
 )
 
 column = Column(
-    Button(Const("Go"), id="go", on_click=clicked),
-    Button(Const("Run"), id="run", on_click=clicked),
-    Button(Const("Fly"), id="fly", on_click=clicked),
+    Button(Const("Витамин С (1) цена - 1000 ₽"), id="peels", on_click=clicked),
+    Button(Const("Витамин D (1) цена - 1200 ₽"), id="capsuls", on_click=clicked),
+    Button(Const("Витамин E (1) цена - 1500 ₽"), id="gums", on_click=clicked),
 )
 
 # __init__.py
 dialog = Dialog(
-    Window('Группа',
-           group,
-           row,
+    Window('''
+    Корзина товаров 🛒 !
+    
+На общую сумму: 3700 ₽
+    '''
+
+           ,
            column,
+           # row,
+           group,
            state=MySG.main,
            )
 )

@@ -4,12 +4,12 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import Message
 
 from aiogram_dialog import Window, Dialog, DialogRegistry, DialogManager, StartMode
-from aiogram_dialog.widgets.kbd import Button
+from aiogram_dialog.widgets.kbd import Button, Group
 from aiogram_dialog.widgets.text import Const
 from aiogram_dialog.widgets.text.multi import Multi
 
 storage = MemoryStorage()
-token = "5832323088:AAEmcpRNspoK19fFdkOeJqJGJaS3sajBVHY"
+token = "5832323088:AAH6wC9N4xmU8dm7z2nAGQj-phiTGnatmc4"
 bot = Bot(token)
 dp = Dispatcher(bot, storage=storage)
 registry = DialogRegistry(dp)
@@ -17,6 +17,17 @@ registry = DialogRegistry(dp)
 
 class MySG(StatesGroup):
     main = State()
+
+
+# keyboards.py
+group = Group(
+    Button(Const("Каталог 💊"), id="tele"),
+    Button(Const("Изменить товары в корзине 🔄"), id="tele"),
+    Button(Const("Очистить корзину 🗑"), id="tele"),
+    Button(Const("Выйти 🔚"), id="tele"),
+
+    width=1,
+)
 
 
 # getter.py
@@ -27,31 +38,11 @@ async def get_data(**kwargs):
 
 
 dialog = Dialog(
-    # Window(
-    #     # This will produce text `Hello! And goodbye!`
-    #     Multi(
-    #         Const("Hello!"),
-    #         Const("And goodbye!"),
-    #         sep=" ",
-    #     ),
-    #     state=MySG.main,
-    # ),
-    # Window(
-    #     # This will produce text `Hello! And goodbye!`
-    #     Multi(
-    #         Format("Hello, {name}"),
-    #         Const("and goodbye {name}!"),
-    #         sep=", ",
-    #     ),
-    #     state=MySG.main,
-    #     getter=get_data,  # data getter
-    # ),
     Window(
-        Multi(
-            # Multi(Const("01"), Const("02"), Const("2003"), sep="."),
-            Multi(Const("04"), Const("05"), Const("06"), sep=":"),
-            sep="T"
+        Const(
+            f'Ваш заказ №1456 от "04:05:06 успешно принят. Ожидайте подтверждения и реквизитов для оплаты.',
         ),
+        group,
         state=MySG.main,
         getter=get_data,  # data getter
     )
